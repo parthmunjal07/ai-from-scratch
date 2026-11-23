@@ -1,15 +1,15 @@
-import { PROMPT_PATTERNS } from "./prompts-patterns";
+import { PROMPT_PATTERNS } from "./prompts-patterns.js";
 
-function build_prompt(pattern_name, variables, system_override=None) {
+export function build_prompt(pattern_name, variables, system_override=null) {
    const pattern = PROMPT_PATTERNS[pattern_name]
    if (!pattern) {
       throw new Error(
-         `Unknown pattern: ${pattern_name}. Available: ${list(PROMPT_PATTERNS.keys())}`
+         `Unknown pattern: ${pattern_name}. Available: ${Object.keys(PROMPT_PATTERNS).join(", ")}`
       )
    }
 
-   const missing = pattern.variables.filter(v => !(v in variables))
-   if (missing) {
+   const missing = pattern.variables.filter(variable => !(variable in variables))
+   if (missing.length > 0) {
       throw new Error(
          `Missing variables for ${pattern_name}: ${missing}`
       )
@@ -28,7 +28,7 @@ function build_prompt(pattern_name, variables, system_override=None) {
       "pattern": pattern_name,
       "metadata": {
          "description": pattern["description"],
-         "variables_used": list(variables.keys()),
+         "variables_used": Object.keys(variables),
         },
     }
 

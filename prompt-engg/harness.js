@@ -121,3 +121,32 @@ async function simulateLlmCall(modelName, request) {
       latency_ms: 0,
    }
 }
+
+export function run_prompt_test(prompt, models = null) {
+   if (models === null) {
+      models = Object.keys(MODEL_CONFIGS);
+   }
+
+   const results = {};
+
+   for (const modelName of models) {
+      const config = MODEL_CONFIGS[modelName];
+      const formatter = FORMATTERS[config.provider];
+      const request = formatter(prompt);
+
+      const start = performance.now();
+      const response = simulateLlmCall(modelName, request);
+      const wallTime = performance.now() - start;
+
+      results[modelName] = {
+         response: response.response,
+         tokens: response.tokens_used,
+         api_latency_ms: response.latency_ms,
+         wall_time_ms: Math.round(wallTime * 10) / 10,
+         finish_reason: response.finish_reason ?? null,
+         request_payload: request,
+      };
+   }
+
+   return results;
+}

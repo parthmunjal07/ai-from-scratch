@@ -1,5 +1,3 @@
-import { json } from "node:stream/consumers"
-
 function score_response(response_text, criteria) {
    scores = {}
 
